@@ -1,0 +1,234 @@
+version: "3"
+
+services:
+  # config server 
+  mongo_cfgsvr0:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${CFGSVR0_PORT}
+        published: ${CFGSVR0_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT}
+          memory: ${MEM_LIMIT}
+    container_name: mongo_cfgsvr0_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${CFGSVR0_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/cfgsvr0.conf"
+
+  mongo_cfgsvr1:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${CFGSVR1_PORT}
+        published: ${CFGSVR1_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT}
+          memory: ${MEM_LIMIT}
+    container_name: mongo_cfgsvr1_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${CFGSVR1_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/cfgsvr1.conf"
+
+  mongo_cfgsvr2:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${CFGSVR2_PORT}
+        published: ${CFGSVR2_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT}
+          memory: ${MEM_LIMIT}
+    container_name: mongo_cfgsvr2_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${CFGSVR2_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/cfgsvr2.conf"
+    
+  # queryrouter 0
+  mongo_queryrouter0:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    depends_on:
+      - mongo_cfgsvr0
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT}
+          memory: ${MEM_LIMIT}
+    ports:
+      - target: ${QUERYROUTER0_PORT}
+        published: ${QUERYROUTER0_PORT}
+        protocol: tcp
+    container_name: mongo_queryrouter0_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${QUERYROUTER0_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongos --config /data/mongodb/config/queryrouter0.conf"
+    
+  # shard server 0  
+  mongo_shard0svr0:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${SHARDSVR00_PORT}
+        published: ${SHARDSVR00_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${SHARD_CPU_LIMIT}
+          memory: ${SHARD_MEM_LIMIT}
+    container_name: mongo_shard0svr0_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${SHARDSVR00_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/shardsvr00.conf"
+
+  mongo_shard0svr1:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${SHARDSVR01_PORT}
+        published: ${SHARDSVR01_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${SHARD_CPU_LIMIT}
+          memory: ${SHARD_MEM_LIMIT}
+    container_name: mongo_shard0svr1_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${SHARDSVR01_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/shardsvr01.conf"
+        
+  mongo_shard0svr2:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${SHARDSVR02_PORT}
+        published: ${SHARDSVR02_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${SHARD_CPU_LIMIT}
+          memory: ${SHARD_MEM_LIMIT}
+    container_name: mongo_shard0svr2_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${SHARDSVR02_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/shardsvr02.conf"
+    
+  mongo_shard1svr0:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${SHARDSVR10_PORT}
+        published: ${SHARDSVR10_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${SHARD_CPU_LIMIT}
+          memory: ${SHARD_MEM_LIMIT}
+    container_name: mongo_shard1svr0_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${SHARDSVR10_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/shardsvr10.conf"
+
+  mongo_shard1svr1:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${SHARDSVR11_PORT}
+        published: ${SHARDSVR11_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${SHARD_CPU_LIMIT}
+          memory: ${SHARD_MEM_LIMIT}
+    container_name: mongo_shard1svr1_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${SHARDSVR11_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/shardsvr11.conf"
+        
+  mongo_shard1svr2:
+    image: mongo:${DOCKER_IMAGE_VERSION}
+    ports:
+      - target: ${SHARDSVR12_PORT}
+        published: ${SHARDSVR12_PORT}
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          cpus: ${SHARD_CPU_LIMIT}
+          memory: ${SHARD_MEM_LIMIT}
+    container_name: mongo_shard1svr2_${CLUSTER_NAME}
+    restart: always
+    tty: true
+    networks:
+      default:
+        ipv4_address: ${SHARDSVR12_IP}
+    volumes:
+      - ${STORAGE_DIR}:/data/mongodb/storage
+      - ${CONFIG_DIR}:/data/mongodb/config
+    command: bash -c "mongod --config /data/mongodb/config/shardsvr12.conf"
+
+
+networks:
+  default:
+    name: dev_network
+    external: true
+        
